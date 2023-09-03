@@ -88,7 +88,7 @@ say();
 [codetabs src="say" current="index.html"]
 
 ```smart
-import پویا در اسکریپت‌های معمولی هم کار می‌کنند، نیازی به `script type="module"` ندارند.
+import پویا در اسکریپت‌های معمولی هم کار می‌کنند، نیازی به `script type="module"‎` ندارند.
 ```
 
 ```smart
