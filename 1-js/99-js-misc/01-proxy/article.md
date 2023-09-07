@@ -1,51 +1,51 @@
-# Proxy and Reflect
+# Proxy و Reflect
 
-A `Proxy` object wraps another object and intercepts operations, like reading/writing properties and others, optionally handling them on its own, or transparently allowing the object to handle them.
+کار یک شیء `proxy` این است که یک شیء دیگر را بطوری پوشش دهد که بتواند عملیاتی مثل خواندن/نوشتن خاصیت‌ها و دیگر عملیات را میانجی گری کند، می تواند خودش عملیات را بطور مستقیم مدیریت کند یا مدیریت عملیات را به خود شیء برگرداند.
 
-Proxies are used in many libraries and some browser frameworks. We'll see many practical applications in this article.
+Proxy در بسیاری از کتابخانه‌ها و برخی فریم‌ورک‌های مرورگر استفاده می‌شود. در این مقاله کاربردهای عملی بسیاری از آن خواهیم دید.
 
 ## Proxy
 
-The syntax:
+ساختار:
 
 ```js
 let proxy = new Proxy(target, handler)
 ```
 
-- `target` -- is an object to wrap, can be anything, including functions.
-- `handler` -- proxy configuration: an object with "traps", methods that intercept operations. - e.g. `get` trap for reading a property of `target`, `set` trap for writing a property into `target`, and so on.
+- `target` -- یک شی است که پوشش داده می‌شود، می‌تواند هر چیزی باشد، از جمله توابع.
+- `handler` -- تنظیمات proxy: یک شی با "میانجی‌گری‌کننده‌ها"، متدهایی که عملیات را میانجی‌گری می‌کنند. به عنوان مثال: `get` برای خواندن یک خاصیت از `target`و `set` برای نوشتن یک خاصیت در `target` و غیره.
 
-For operations on `proxy`, if there's a corresponding trap in `handler`, then it runs, and the proxy has a chance to handle it, otherwise the operation is performed on `target`.
+برای عملیات روی `proxy`، اگر میانجی‌گری‌کننده‌ای در `handler` وجود داشته باشد، اجرا می‌شود. بنابراین پراکسی فرصت پاسخدهی و کنترل عملیات را دارد، در غیر این صورت عملیات روی `target` که شیء اصلی است اجرا می‌شود.
 
-As a starting example, let's create a proxy without any traps:
+برای شروع، یک proxy بدون هیچ میانجی‌گری‌کننده‌ای ایجاد می‌کنیم:
 
 ```js run
 let target = {};
-let proxy = new Proxy(target, {}); // empty handler
+let proxy = new Proxy(target, {}); // خالی handler
 
-proxy.test = 5; // writing to proxy (1)
-alert(target.test); // 5, the property appeared in target!
+proxy.test = 5; // (1)  proxy نوشتن روی  
+alert(target.test); // 5, ایجاد شد target خاصیت روی
 
-alert(proxy.test); // 5, we can read it from proxy too (2)
+alert(proxy.test); // (2) هم می توان خواند proxy از 
 
 for(let key in proxy) alert(key); // test, iteration works (3)
 ```
 
-As there are no traps, all operations on `proxy` are forwarded to `target`.
+از آنجا که هیچ میانجی‌گری‌کننده‌ای وجود ندارد، تمام عملیات روی `proxy` به `target` ارجاع داده می‌شود.
 
-1. A writing operation `proxy.test=` sets the value on `target`.
-2. A reading operation `proxy.test` returns the value from `target`.
-3. Iteration over `proxy` returns values from `target`.
+1. عمل نوشتن `proxy.test=` مقدار را در `target`تنظیم می‌کند.
+2. عمل خواندن `proxy.test` مقدار را از `target`برمی‌گرداند.
+3. حلقه زدن روی `proxy` مقادیر را از `target` برمی‌گرداند.
 
-As we can see, without any traps, `proxy` is a transparent wrapper around `target`.
+همانطور که می‌بینیم، بدون هیچ میانجی‌گری‌کننده‌ای، `proxy` یک پوشش شفاف برای `target` است (یک رابط که تغییری اعمال نمی‌کند).
 
 ![](proxy.svg)
 
-`Proxy` is a special "exotic object". It doesn't have own properties. With an empty `handler` it transparently forwards operations to `target`.
+`Proxy` یک "شی غیرمعمول" ویژه است. ویژگی های خاص خود را ندارد. با یک `handler` خالی فقط عملیات را به `target` ارجاع می‌دهد.
 
-To activate more capabilities, let's add traps.
+برای فعال کردن قابلیت‌های بیشتر، میانجی‌گری‌کننده‌ها را اضافه می‌کنیم.
 
-What can we intercept with them?
+چه عملیاتی را می‌توانیم با آنها میانجی‌گری کنیم؟
 
 For most operations on objects, there's a so-called "internal method" in the JavaScript specification that describes how it works at the lowest level. For instance `[[Get]]`, the internal method to read a property, `[[Set]]`, the internal method to write a property, and so on. These methods are only used in the specification, we can't call them directly by name.
 
